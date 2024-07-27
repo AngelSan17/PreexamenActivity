@@ -12,10 +12,11 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var etUsername: EditText
+    private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnLogin: Button
     private lateinit var tvRegister: TextView
@@ -32,39 +33,47 @@ class MainActivity : AppCompatActivity() {
         requestQueue = Volley.newRequestQueue(this)
 
         btnLogin.setOnClickListener {
-            val user = etUsername.text.toString().trim()
+            val email = etEmail.text.toString().trim()
             val pass = etPassword.text.toString().trim()
 
-            if (user.isEmpty() || pass.isEmpty()) {
+            if (email.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(this, "LOS DATOS NO ESTÁN COMPLETOS...!!!", Toast.LENGTH_SHORT).show()
-                etUsername.requestFocus()
+                etEmail.requestFocus()
             } else {
                 validarUsuario(URL_LOGIN)
             }
         }
 
         tvRegister.setOnClickListener {
+            // Ir a la actividad de registro
             val intent = Intent(this, RegisterActivity2::class.java)
             startActivity(intent)
         }
     }
 
     private fun initUI() {
-        etUsername = findViewById(R.id.etUsername)
+        etEmail = findViewById(R.id.etUsername)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
         tvRegister = findViewById(R.id.tvRegister)
     }
 
     private fun validarUsuario(url: String) {
-        val user = etUsername.text.toString().trim()
+        val email = etEmail.text.toString().trim()
         val pass = etPassword.text.toString().trim()
 
         val stringRequest = object : StringRequest(Request.Method.POST, url,
             Response.Listener { response ->
-                if (response.trim() == "success") {
-                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-                    // Navegar a otra actividad o pantalla
+                val jsonResponse = JSONObject(response)
+                if (jsonResponse.getString("status") == "success") {
+                    val intent = Intent(this@MainActivity, MenuActivity::class.java)
+                    intent.putExtra("id", jsonResponse.getString("id"))
+                    intent.putExtra("name", jsonResponse.getString("name"))
+                    intent.putExtra("email", email)
+                    intent.putExtra("password", pass)
+                    intent.putExtra("phone", jsonResponse.getString("phone"))
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
                 }
@@ -74,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             }) {
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
-                params["username"] = user
+                params["email"] = email
                 params["password"] = pass
                 return params
             }

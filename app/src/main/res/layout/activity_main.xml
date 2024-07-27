@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:gravity="center"
+    tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/ivProfile"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@drawable/icprofile"
-        android:contentDescription="@string/profile_image"
+        android:contentDescription="Profile Image"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="24dp"/>
 
