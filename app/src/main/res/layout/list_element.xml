@@ -20,7 +20,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="16dp"
             android:src="@drawable/icprofile"
-            android:contentDescription="Job Image" />
+            android:contentDescription="@string/job_image" />
 
         <TextView
             android:id="@+id/jobNameTextView"
@@ -54,6 +54,13 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
 
+        <Button
+            android:id="@+id/btnDeleteJob"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:text="Eliminar" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

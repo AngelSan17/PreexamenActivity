@@ -9,34 +9,23 @@
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre"
+        android:hint="Nombre del Trabajo"
         android:padding="12dp"
         android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Correo"
-        android:inputType="textEmailAddress"
+        android:hint="Descripción del Trabajo"
         android:padding="12dp"
         android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/etCity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
-
-    <EditText
-        android:id="@+id/etPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Teléfono"
-        android:inputType="phone"
+        android:hint="Ciudad"
         android:padding="12dp"
         android:layout_marginBottom="24dp"/>
 
@@ -44,15 +33,8 @@
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guardar Cambios"
+        android:text="Guardar Trabajo"
         android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
-    <Button
-        android:id="@+id/btnDeleteProfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Eliminar Perfil"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="16dp" />
 
 </LinearLayout>

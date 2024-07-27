@@ -1,5 +1,6 @@
 package com.example.preexamenactivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -14,23 +15,22 @@ import org.json.JSONObject
 
 class EditProfileActivity : AppCompatActivity() {
 
-    // Declaración de las variables que se enlazan con los elementos de la interfaz
     private lateinit var etName: EditText
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var etPhone: EditText
     private lateinit var btnSave: Button
+    private lateinit var btnDeleteProfile: Button
     private lateinit var requestQueue: RequestQueue
 
-    // Dirección IP y URL del script PHP para actualizar datos
     private val dirIp = "http://192.168.100.14/android1/"
     private val URL_UPDATE = "${dirIp}update.php"
+    private val URL_DELETE = "${dirIp}delete_user.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
 
-        // Inicializar la interfaz de usuario
         initUI()
         requestQueue = Volley.newRequestQueue(this)
 
@@ -41,13 +41,12 @@ class EditProfileActivity : AppCompatActivity() {
         val userPassword = intent.getStringExtra("password")
         val userPhone = intent.getStringExtra("phone")
 
-        // Establecer los valores iniciales de los EditText con los datos del usuario
+        // Establecer los valores iniciales de los EditText
         etName.setText(userName)
         etEmail.setText(userEmail)
         etPassword.setText(userPassword)
         etPhone.setText(userPhone)
 
-        // Configurar el botón de guardar para actualizar el perfil del usuario
         btnSave.setOnClickListener {
             if (userId != null) {
                 updateUser(URL_UPDATE, userId)
@@ -55,32 +54,37 @@ class EditProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "User ID is missing", Toast.LENGTH_SHORT).show()
             }
         }
+
+        btnDeleteProfile.setOnClickListener {
+            if (userId != null) {
+                deleteUser(URL_DELETE, userId)
+            } else {
+                Toast.makeText(this, "User ID is missing", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    // Función para inicializar la interfaz de usuario
     private fun initUI() {
         etName = findViewById(R.id.etName)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         etPhone = findViewById(R.id.etPhone)
         btnSave = findViewById(R.id.btnSave)
+        btnDeleteProfile = findViewById(R.id.btnDeleteProfile)
     }
 
-    // Función para actualizar los datos del usuario en el servidor
     private fun updateUser(url: String, id: String) {
         val name = etName.text.toString().trim()
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
         val phone = etPhone.text.toString().trim()
 
-        // Crear una solicitud POST para actualizar los datos del usuario
         val stringRequest = object : StringRequest(Request.Method.POST, url,
             Response.Listener { response ->
-                // Parsear la respuesta del servidor
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("message")) {
                     Toast.makeText(this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show()
-                    finish() // Cerrar la actividad si la actualización fue exitosa
+                    finish()
                 } else if (jsonResponse.has("error")) {
                     Toast.makeText(this, jsonResponse.getString("error"), Toast.LENGTH_SHORT).show()
                 }
@@ -88,7 +92,6 @@ class EditProfileActivity : AppCompatActivity() {
             Response.ErrorListener { error ->
                 Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }) {
-            // Configurar los parámetros que se enviarán en la solicitud POST
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
                 params["id"] = id
@@ -100,7 +103,33 @@ class EditProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Añadir la solicitud a la cola de solicitudes
+        requestQueue.add(stringRequest)
+    }
+
+    private fun deleteUser(url: String, id: String) {
+        val stringRequest = object : StringRequest(Request.Method.POST, url,
+            Response.Listener { response ->
+                val jsonResponse = JSONObject(response)
+                if (jsonResponse.has("message")) {
+                    Toast.makeText(this, jsonResponse.getString("message"), Toast.LENGTH_SHORT).show()
+                    // Navegar de vuelta al login
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else if (jsonResponse.has("error")) {
+                    Toast.makeText(this, jsonResponse.getString("error"), Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["id"] = id
+                return params
+            }
+        }
+
         requestQueue.add(stringRequest)
     }
 }
